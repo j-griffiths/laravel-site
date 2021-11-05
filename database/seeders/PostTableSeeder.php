@@ -19,5 +19,7 @@ class PostTableSeeder extends Seeder
         $post->content = "This is an example of content that a post could include.";
         $post->user_id = 1;
         $post->save();
+
+        Post::factory(10)->create();
     }
 }
