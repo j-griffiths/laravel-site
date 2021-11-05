@@ -22,6 +22,6 @@ class UserTableSeeder extends Seeder
         $user->remember_token = "rememberme";
         $user->save();
 
-        User::factory(10)->create();
+        User::factory(20)->create();
     }
 }

@@ -29,6 +29,6 @@ class CommentTableSeeder extends Seeder
         $comment->commentable_type = Comment::class;
         $comment->save();
 
-        Comment::factory(10)->create();
+        Comment::factory(50)->create();
     }
 }

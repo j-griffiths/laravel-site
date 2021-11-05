@@ -17,9 +17,9 @@ class CreateProfilesTable extends Migration
             $table->foreignId('user_id')->constrained()->onDelete('cascade')->onUpdate('cascade');
             $table->string('forename', 15);
             $table->string('surname', 15);
-            $table->string('profession', 15);
-            $table->string('website', 30);
-            $table->string('biography', 300);
+            $table->string('profession', 100);
+            $table->string('website', 255);
+            $table->string('biography', 1000);
             $table->timestamps();
         });
     }
