@@ -9,9 +9,9 @@ class Comment extends Model
 {
     use HasFactory;
 
-    public function user()
+    public function profile()
     {
-        belongsTo(User::class);
+        return $this->belongsTo(Profile::class);
     }
 
     public function commentable()
@@ -26,6 +26,6 @@ class Comment extends Model
 
     public function likes()
     {
-        return $this->morphToMany(User::class, 'like');
+        return $this->morphToMany(Profile::class, 'like');
     }
 }

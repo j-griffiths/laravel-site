@@ -2,9 +2,9 @@
 
 namespace Database\Factories;
 
-use App\Models\User;
-use App\Models\Post;
 use App\Models\Comment;
+use App\Models\Post;
+use App\Models\Profile;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 class CommentFactory extends Factory
@@ -26,14 +26,14 @@ class CommentFactory extends Factory
         if ($float > 0.5) {
             return [
                 'content' => $this->faker->paragraph(),
-                'user_id' => User::inRandomOrder()->first(),
+                'profile_user_id' => Profile::inRandomOrder()->first(),
                 'commentable_id' => Post::inRandomOrder()->first(),
                 'commentable_type' => Post::class,
             ];
         } else {
             return [
                 'content' => $this->faker->paragraph(),
-                'user_id' => User::inRandomOrder()->first(),
+                'profile_user_id' => Profile::inRandomOrder()->first(),
                 'commentable_id' => Comment::inRandomOrder()->first(),
                 'commentable_type' => Comment::class,
             ];

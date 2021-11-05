@@ -2,9 +2,9 @@
 
 namespace Database\Factories;
 
-use App\Models\User;
-use App\Models\Post;
 use App\Models\Comment;
+use App\Models\Post;
+use App\Models\Profile;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 class LikeFactory extends Factory
@@ -19,11 +19,13 @@ class LikeFactory extends Factory
         $float = $this->faker->randomFloat(1, 0, 1);
         if ($float > 0.5) {
             return [
-                User::inRandomOrder()->first()->likedPosts()->attach(Post::inRandomOrder()->first()),
+                Profile::inRandomOrder()->first()->likedPosts()
+                    ->attach(Post::inRandomOrder()->first()),
             ];
         } else {
             return [
-                User::inRandomOrder()->first()->likedComments()->attach(Comment::inRandomOrder()->first()),
+                Profile::inRandomOrder()->first()->likedComments()
+                    ->attach(Comment::inRandomOrder()->first()),
             ];
         }
     }
