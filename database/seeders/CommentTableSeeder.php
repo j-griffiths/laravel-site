@@ -3,6 +3,7 @@
 namespace Database\Seeders;
 
 use App\Models\Comment;
+use App\Models\Post;
 use Illuminate\Database\Seeder;
 
 class CommentTableSeeder extends Seeder
@@ -18,14 +19,14 @@ class CommentTableSeeder extends Seeder
         $comment->content = "This is an example of content that a comment could include.";
         $comment->user_id = 1;
         $comment->commentable_id = 1;
-        $comment->commentable_type = "Post";
+        $comment->commentable_type = Post::class;
         $comment->save();
 
         $comment = new Comment;
         $comment->content = "This is a sub-comment.";
         $comment->user_id = 2;
         $comment->commentable_id = 1;
-        $comment->commentable_type = "Comment";
+        $comment->commentable_type = Comment::class;
         $comment->save();
 
         Comment::factory(10)->create();
