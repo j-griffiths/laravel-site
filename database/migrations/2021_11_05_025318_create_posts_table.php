@@ -19,6 +19,7 @@ class CreatePostsTable extends Migration
             $table->string('content', 10000);
             $table->foreignId('profile_user_id')->references('user_id')->on('profiles')
                 ->onDelete('cascade')->onUpdate('cascade');
+            $table->string('imagePath')->nullable();
             $table->timestamps();
         });
     }
