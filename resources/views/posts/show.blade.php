@@ -5,21 +5,10 @@
     </x-slot>
 
     <x-slot name="header">
-        <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-            {{ $post->title }}
-        </h2>
+        {{ $post->title }}
     </x-slot>
 
-    <div class="py-12">
-        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-            <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
-                    <div class="p-6 bg-white border-b border-gray-200">
-                        {{$post->content}}
-                    </div>
-            </div>
-        </div>
-    </div>
-    
+    {{$post->content}}
 
 </x-app-layout>
 
