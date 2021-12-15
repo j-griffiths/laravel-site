@@ -14,10 +14,10 @@ class ProfileFactory extends Factory
      */
     public function definition()
     {
+        $maxUsers = User::get()->count();
         return [
-            'user_id' => User::inRandomOrder()->first(),
-            'forename' => $this->faker->firstName(),
-            'surname' => $this->faker->lastName(),
+            'user_id' => $this->faker->unique()->numberBetween(1, $maxUsers),
+            'display_name' => $this->faker->name(),
             'profession' => $this->faker->jobTitle(),
             'website' => $this->faker->url(),
             'biography' => $this->faker->paragraph(),

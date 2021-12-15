@@ -9,13 +9,6 @@ class Profile extends Model
 {
     use HasFactory;
 
-    /**
-     * The primary key associated with the table.
-     *
-     * @var string
-     */
-    protected $primaryKey = 'user_id';
-
     public function user()
     {
         return $this->belongsTo(User::class);

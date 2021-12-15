@@ -14,12 +14,12 @@ class CreateProfilesTable extends Migration
     public function up()
     {
         Schema::create('profiles', function (Blueprint $table) {
-            $table->foreignId('user_id')->constrained()->onDelete('cascade')->onUpdate('cascade');
-            $table->string('forename', 15);
-            $table->string('surname', 15);
-            $table->string('profession', 100);
-            $table->string('website', 255);
-            $table->string('biography', 1000);
+            $table->id();
+            $table->foreignId('user_id')->contrained()->onDelete('cascade')->onUpdate('cascade');
+            $table->string('display_name', 30)->nullable();
+            $table->string('profession', 100)->nullable();
+            $table->string('website', 255)->nullable();
+            $table->string('biography', 1000)->nullable();
             $table->timestamps();
         });
     }
