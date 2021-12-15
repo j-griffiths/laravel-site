@@ -35,8 +35,6 @@ class PostController extends Controller
      */
     public function store(Request $request)
     {
-        $profid = auth()->user()->id;
-        $request->merge(['profile_user_id' => $profid]);
         $request->validate([
             'uploadedFile' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:4096',
         ]);
@@ -44,7 +42,7 @@ class PostController extends Controller
         $path = null;
         if ($request->hasFile('uploadedFile')) {
             if ($request->file('uploadedFile')->isValid()) {
-                $path = $request->uploadedFile->store('public/images');
+                $path = $request->uploadedFile->store('images');
             }
         }
         $request->merge(['imagePath' => $path]);
@@ -52,16 +50,14 @@ class PostController extends Controller
         $validatedData = $request->validate([
             'title' => 'required|max:300',
             'content' => 'required|max:10000',
-            'profile_user_id' => 'required|integer',
             'imagePath' => 'nullable',
         ]);
 
         $post = new Post;
         $post->title = $validatedData['title'];
         $post->content = $validatedData['content'];
-        $post->profile_user_id = $validatedData['profile_user_id'];
         $post->imagePath = $validatedData['imagePath'];
-        $post->save();
+        auth()->user()->profile->posts()->save($post);
 
         session()->flash('message', 'Post was created successfully.');
         return redirect()->route('posts.show', ['post' => $post]);
