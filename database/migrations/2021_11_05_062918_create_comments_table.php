@@ -18,7 +18,7 @@ class CreateCommentsTable extends Migration
             $table->string('content', 5000);
             $table->foreignId('commentable_id');
             $table->string('commentable_type');
-            $table->foreignId('profile_user_id')->references('user_id')->on('profiles')
+            $table->foreignId('profile_id')->constrained()
                 ->onDelete('cascade')->onUpdate('cascade');
             $table->timestamps();
         });

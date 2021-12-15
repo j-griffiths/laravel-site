@@ -26,14 +26,14 @@ class CommentFactory extends Factory
         if ($float > 0.5) {
             return [
                 'content' => $this->faker->paragraph(),
-                'profile_user_id' => Profile::inRandomOrder()->first(),
+                'profile_id' => Profile::inRandomOrder()->first(),
                 'commentable_id' => Post::inRandomOrder()->first(),
                 'commentable_type' => Post::class,
             ];
         } else {
             return [
                 'content' => $this->faker->paragraph(),
-                'profile_user_id' => Profile::inRandomOrder()->first(),
+                'profile_id' => Profile::inRandomOrder()->first(),
                 'commentable_id' => Comment::inRandomOrder()->first(),
                 'commentable_type' => Comment::class,
             ];

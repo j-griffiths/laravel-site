@@ -17,14 +17,14 @@ class CommentTableSeeder extends Seeder
     {
         $comment = new Comment;
         $comment->content = "This is an example of content that a comment could include.";
-        $comment->profile_user_id = 1;
+        $comment->profile_id = 1;
         $comment->commentable_id = 1;
         $comment->commentable_type = Post::class;
         $comment->save();
 
         $comment = new Comment;
         $comment->content = "This is a sub-comment.";
-        $comment->profile_user_id = 2;
+        $comment->profile_id = 2;
         $comment->commentable_id = 1;
         $comment->commentable_type = Comment::class;
         $comment->save();

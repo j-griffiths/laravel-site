@@ -14,11 +14,11 @@ class CreateLikesTable extends Migration
     public function up()
     {
         Schema::create('likes', function (Blueprint $table) {
-            $table->foreignId('profile_user_id')->references('user_id')->on('profiles')
+            $table->foreignId('profile_id')->constrained()
                 ->onDelete('cascade')->onUpdate('cascade');
             $table->foreignId('like_id');
             $table->string('like_type');
-            $table->primary(['profile_user_id', 'like_id', 'like_type']);
+            $table->primary(['profile_id', 'like_id', 'like_type']);
         });
     }
 
