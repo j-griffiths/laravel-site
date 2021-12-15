@@ -2,7 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\PostController;
-use App\Http\Controllers\UserController;
+use App\Http\Controllers\ProfileController;
 
 /*
 |--------------------------------------------------------------------------
@@ -23,12 +23,10 @@ Route::get('/dashboard', function () {
     return redirect()->route('posts.index');
 })->middleware(['auth'])->name('dashboard');
 
-
-
 Route::group(['middleware' => 'auth'], function () {
     Route::resources([
         'posts' => PostController::class, 
-        'users' => UserController::class
+        'users' => ProfileController::class
     ]);
 });
 
