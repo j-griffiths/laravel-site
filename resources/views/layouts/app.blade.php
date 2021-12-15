@@ -31,6 +31,14 @@
             </div>
         </header>
 
+        @if (session()->has('message'))
+        <div class="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8 bg-green-500 shadow">
+            <h2 class="font-semibold text-xl text-white leading-tight">
+                {{ session()->get('message') }}
+            </h2>
+        </div>
+        @endif
+
         <!-- Page Content -->
         <main>
             <div class="py-12">

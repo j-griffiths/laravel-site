@@ -59,7 +59,7 @@ class PostController extends Controller
         $post->imagePath = $validatedData['imagePath'];
         auth()->user()->profile->posts()->save($post);
 
-        session()->flash('message', 'Post was created successfully.');
+        session()->flash('message', 'Post Created Successfully!');
         return redirect()->route('posts.show', ['post' => $post]);
     }
 
