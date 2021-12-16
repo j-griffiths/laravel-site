@@ -49,6 +49,16 @@ class ProfileController extends Controller
         //
     }
 
+    public function apiShow($id)
+    {
+        $profile = Profile::find($id);
+        return response()->json([
+            'status' => 'success',
+            'msg'    => 'Okay',
+            'profile' => $profile,
+        ], 201);
+    }
+
     /**
      * Show the form for editing the specified resource.
      *
