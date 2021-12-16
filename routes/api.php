@@ -2,7 +2,8 @@
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\CommentController; 
+use App\Http\Controllers\CommentController;
+use App\Http\Controllers\ProfileController;
 
 /*
 |--------------------------------------------------------------------------
@@ -19,4 +20,6 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
 
-Route::apiResource('comments', CommentController::class)->name('comments', 'api')->middleware(['auth:sanctum']);
+Route::apiResource('comments', CommentController::class, ['as' => 'api'])->middleware(['auth:sanctum']);
+
+Route::get('/profiles/{id}', [ProfileController::class, 'apiShow'])->name('api.profiles.show')->middleware(['auth:sanctum']);
