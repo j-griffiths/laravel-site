@@ -49,7 +49,7 @@ class CommentController extends Controller
 
         $comment['name'] = $user->name;
 
-        $user->notify(new ReplyReceived());
+        $post->profile->user->notify(new ReplyReceived());
         
         return response()->json([
             'status' => 'success',
