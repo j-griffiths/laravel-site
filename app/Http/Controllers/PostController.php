@@ -144,6 +144,7 @@ class PostController extends Controller
      */
     public function destroy(Post $post)
     {
+        Storage::delete($post->imagePath);
         $post->delete();
         session()->flash('message', 'Post Deleted Successfully!');
         return redirect()->route('posts.index', ['post' => $post]);
