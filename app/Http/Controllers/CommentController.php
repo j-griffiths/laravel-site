@@ -31,20 +31,22 @@ class CommentController extends Controller
                 'comment'   => 'required|max:5000',
                 'post_id' => 'required|integer|exists:posts,id'
             ]);
-        }
-        catch (ValidationException $exception) {
+        } catch (ValidationException $exception) {
             return response()->json([
                 'status' => 'error',
                 'msg'    => 'Error',
                 'errors' => $exception->errors(),
             ], 422);
-        }
+        };
 
+        $user = auth()->user();
         $comment = new Comment();
         $comment->content = $request->comment;
         $post = Post::find($request->post_id);
-        $comment->profile()->associate(auth()->user()->profile);
+        $comment->profile()->associate($user->profile);
         $post->comments()->save($comment);
+
+        $comment['name'] = $user->name;
         
         return response()->json([
             'status' => 'success',
