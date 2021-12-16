@@ -8,17 +8,6 @@
         Create New Post
     </x-slot>
 
-    @if ($errors->any())
-        <div>
-            Errors:
-            <ul>
-                @foreach ($errors->all() as $error)
-                    <li> {{ $error }} </li>
-                @endforeach
-            </ul>
-        </div>
-    @endif
-
     <form method="POST" action="{{ route('posts.store') }}" enctype="multipart/form-data">
         @csrf
         <div class="flex flex-wrap -mx-3 mb-6">

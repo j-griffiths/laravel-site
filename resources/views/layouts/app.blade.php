@@ -30,6 +30,19 @@
                 </h2>
             </div>
         </header>
+        
+        @if ($errors->any())
+        <div class="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8 bg-red-500 shadow">
+            <h2 class="font-semibold text-xl text-white leading-tight mb-4">
+                Errors:
+            </h2>
+            <span class="text-white italic">
+                @foreach ($errors->all() as $error)
+                    <li> {{ $error }} </li>
+                @endforeach
+            </span>
+        </div>
+        @endif
 
         @if (session()->has('message'))
         <div class="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8 bg-green-500 shadow">
