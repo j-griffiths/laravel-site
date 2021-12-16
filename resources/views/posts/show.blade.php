@@ -7,8 +7,6 @@
     </x-slot>
 
     <x-slot name="header">
-        
-        
         <div class="flex items-center">
             <div class="flex-1">
                 {{ $post->title }}
@@ -18,27 +16,39 @@
                 </div>
             </div>
             @can('update', $post)
-                <a href="{{ route('posts.edit', ['post' => $post]) }}" class="float-right bg-transparent hover:bg-green-500 text-green-700 font-semibold hover:text-white py-2 px-4 border border-green-500 hover:border-transparent rounded"
+                <a href="{{ route('posts.edit', ['post' => $post]) }}"
+                    class="float-right bg-transparent hover:bg-green-500 text-green-700 font-semibold hover:text-white py-2 px-4 border border-green-500 hover:border-transparent rounded"
                     id="edit-button">Edit Post</a>
             @endcan
         </div>
     </x-slot>
 
-    @if ($post->imagePath)
-        <div class="relative 6/7 bg-red-500" style="padding-bottom: 56.25%">
-            <img src="../{{ $post->imagePath }}" alt="Image Uploaded by Poster"
-                class="absolute h-full w-full object-cover" />
+    <div id="root">
+
+        @if ($post->imagePath)
+            <div class="relative 6/7 bg-red-500" style="padding-bottom: 56.25%">
+                <img src="../{{ $post->imagePath }}" alt="Image Uploaded by Poster"
+                    class="absolute h-full w-full object-cover" />
+            </div>
+        @endif
+
+        <div class="text-base break-words mt-4">
+            <div class="mb-4">
+                {{ $post->content }}
+            </div>
+            <div class="flex">
+                <div class="flex-1"></div>
+                <div class="float-right">
+                    <like-button likeable_id="{{ $post->id }}"
+                        like_exists="{{ auth()->user()->profile->likedPosts->contains($post) }}" likeable_type="post">
+                    </like-button>
+                </div>
+            </div>
         </div>
-    @endif
 
-    <div class="text-base mt-4">
-        {{ $post->content }}
-    </div>
-
-    <div class="font-bold text-xl mt-6 mb-2">
-        Comments
-    </div>
-    <div id="commentSection">
+        <div class="font-bold text-xl mt-6 mb-2">
+            Comments
+        </div>
         <div class="mb-2">
             <textarea
                 class="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-2 px-4 mb-3 h-20 leading-tight 
@@ -56,28 +66,35 @@
 
         <div class="mb-4 border-t flex-col" v-for="comment in comments">
             <div class="mb-2 font-semibold text-sm flex-1">
-                @{{ comment.name }}
+                @{{ comment . name }} @{{ comment . created_at . split('T')[0] + ' ' + comment . created_at . split('T')[1] . split('.')[0] }}
             </div>
             <div class="text-base">
-                @{{ comment.content }}
+                @{{ comment . content }}
             </div>
-            <div class="text-sm italic float-right">
-                @{{ comment.created_at.split("T")[0] + " " + comment.created_at.split("T")[1].split(".")[0] }}
+            <div class="flex items-center">
+                <div class="text-sm italic flex-1">
+                    <like-button class="float-right" :likeable_id="comment.id" :like_exists="false" likeable_type="comment"></like-button>
+                </div>
             </div>
         </div>
 
         @foreach ($post->comments->reverse() as $comment)
-        <div class="mb-4 border-t flex-col">
-            <div class="mb-2 font-semibold text-sm flex-1">
-                {{ $comment->profile->user->name }}
+            <div class="mb-4 border-t flex-col">
+                <div class="mb-2 font-semibold text-sm flex-1">
+                    {{ $comment->profile->user->name }} {{ $comment->created_at }}
+                </div>
+                <div class="text-base">
+                    {{ $comment->content }}
+                </div>
+                <div class="flex items-center">
+                    <div class="text-sm italic flex-1">
+                        <like-button class="float-right" likeable_id="{{ $comment->id }}"
+                            like_exists="{{ auth()->user()->profile->likedComments->contains($comment) }}"
+                            likeable_type="comment">
+                        </like-button>
+                    </div>
+                </div>
             </div>
-            <div class="text-base">
-                {{ $comment->content }}
-            </div>
-            <div class="text-sm italic float-right">
-                {{ $comment->created_at }}
-            </div>
-        </div>
         @endforeach
 
         <div id="noComments" class="mb-2 border-t italic text-base">
@@ -89,19 +106,66 @@
 </x-app-layout>
 
 <script>
+    Vue.component('like-button', {
+        props: [
+            'likeable_id',
+            'like_exists',
+            'likeable_type',
+        ],
+        data: function() {
+            return {
+                status: this.like_exists,
+            };
+        },
+        methods: {
+            createLike() {
+                if (this.status == false) {
+                    axios.post("{{ route('api.likes.store') }}", {
+                        likeable_id: this.likeable_id,
+                        likeable_type: this.likeable_type,
+                    }).then(response => {
+                        console.log(response.data);
+                        this.status = !this.status;
+                    }).catch(error => {
+                        console.log(error.response.data);
+                    });
+                } else {
+                    axios.post("{{ route('api.likes.destroy') }}", {
+                        likeable_id: this.likeable_id,
+                        likeable_type: this.likeable_type,
+                    }).then(response => {
+                        console.log(response.data);
+                        this.status = !this.status;
+                    }).catch(error => {
+                        console.log(error.response.data);
+                    });
+                };
+            },
+        },
+        computed: {
+            /**
+             * @return {string}
+             */
+            likeText() {
+                return (this.status) ? 'UNLIKE' : 'LIKE';
+            },
+        },
+        template: '<button v-on:click="createLike" class="bg-transparent hover:bg-green-500 text-green-700 font-semibold hover:text-white py-2 px-4 border border-green-500 hover:border-transparent rounded" v-text="likeText"></button>'
+    });
+
     var app = new Vue({
-        el: "#commentSection",
+        el: "#root",
         data: {
             oldComments: <?php echo json_encode($post->comments); ?>,
             comments: [],
             newComment: '',
             post_id: {{ $post->id }},
         },
-        mounted: function () {
+        mounted: function() {
             if (this.oldComments.length === 0) {
-                document.getElementById('noComments').style.display='';
+                document.getElementById('noComments').style.display = '';
             } else {
-                document.getElementById('noComments').style.display='none';
+                document.getElementById('noComments').style.display = 'none';
             };
         },
         methods: {
@@ -112,17 +176,15 @@
                 }).then(response => {
                     console.log(response.data);
                     this.comments.unshift(response.data.comment);
-                    this.newComment='';
-                    document.getElementById('noComments').style.display='none';
-                    document.getElementById('errorText').textContent='';
+                    this.newComment = '';
+                    document.getElementById('noComments').style.display = 'none';
+                    document.getElementById('errorText').textContent = '';
                 }).catch(error => {
-                        console.log(error.response.data);
-                        document.getElementById('errorText').textContent=error.response.data.errors.comment;
+                    console.log(error.response.data);
+                    document.getElementById('errorText').textContent = error.response.data.errors
+                        .comment;
                 });
             },
         },
     });
-
-
-    
 </script>
