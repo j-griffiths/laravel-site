@@ -8,6 +8,16 @@ use Illuminate\Http\Request;
 class AnalyticController extends Controller
 {
     /**
+     * Create the controller instance.
+     *
+     * @return void
+     */
+    public function __construct()
+    {
+        $this->authorizeResource(Analytic::class, 'analytic');
+    }
+
+    /**
      * Display a listing of the resource.
      *
      * @return \Illuminate\Http\Response

@@ -49,9 +49,8 @@ class ProfileController extends Controller
         //
     }
 
-    public function apiShow($id)
+    public function apiShow(Profile $profile)
     {
-        $profile = Profile::find($id);
         return response()->json([
             'status' => 'success',
             'msg'    => 'Okay',
