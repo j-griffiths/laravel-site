@@ -61,6 +61,7 @@ class PostController extends Controller
         $validatedData = $request->validate([
             'title' => 'required|max:300',
             'content' => 'required|max:10000',
+            'imagePath' => 'nullable'
         ]);
 
         $post = new Post;
