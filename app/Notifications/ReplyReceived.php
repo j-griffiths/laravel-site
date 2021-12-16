@@ -40,9 +40,10 @@ class ReplyReceived extends Notification
      */
     public function toMail($notifiable)
     {
+        $from = $notifiable->name;
         return (new MailMessage)
-                    ->line('The introduction to the notification.')
-                    ->action('Notification Action', url('/'))
+                    ->line($from . ' interacted with something you posted!')
+                    ->action('Check it out now!', url('/dashboard'))
                     ->line('Thank you for using our application!');
     }
 

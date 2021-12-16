@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Comment;
 use App\Models\Post;
+use App\Notifications\ReplyReceived;
 
 class CommentController extends Controller
 {
@@ -47,6 +48,8 @@ class CommentController extends Controller
         $post->comments()->save($comment);
 
         $comment['name'] = $user->name;
+
+        $user->notify(new ReplyReceived());
         
         return response()->json([
             'status' => 'success',
