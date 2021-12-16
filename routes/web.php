@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\PostController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\AnalyticController;
 
 /*
 |--------------------------------------------------------------------------
@@ -26,8 +27,10 @@ Route::get('/dashboard', function () {
 Route::group(['middleware' => 'auth'], function () {
     Route::resources([
         'posts' => PostController::class, 
-        'users' => ProfileController::class
+        //'users' => ProfileController::class
     ]);
 });
+
+Route::get('/analytics', [AnalyticController::class, 'index'])->name('analytics.index');
 
 require __DIR__.'/auth.php';

@@ -23,7 +23,7 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 
 Route::apiResource('comments', CommentController::class, ['as' => 'api'])->middleware(['auth:sanctum']);
 
-Route::get('/profiles/{id}', [ProfileController::class, 'apiShow'])->name('api.profiles.show')->middleware(['auth:sanctum']);
+Route::get('/profiles/{profile}', [ProfileController::class, 'apiShow'])->name('api.profiles.show')->middleware(['auth:sanctum']);
 
 Route::post('/likes', [LikeController::class, 'store'])->name('api.likes.store')->middleware(['auth:sanctum']);
 
