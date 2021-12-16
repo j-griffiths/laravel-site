@@ -7,15 +7,25 @@
     </x-slot>
 
     <x-slot name="header">
-        {{ $post->title }}
-        <div class="text-sm italic mt-2">
-            Posted by <span class="font-bold text-blue-400"> {{ $post->profile->user->name }} </span> at
-            {{ $post->created_at }}
+        
+        
+        <div class="flex items-center">
+            <div class="flex-1">
+                {{ $post->title }}
+                <div class="text-sm italic mt-2">
+                    Posted by <span class="font-bold text-blue-400"> {{ $post->profile->user->name }} </span> at
+                    {{ $post->created_at }}
+                </div>
+            </div>
+            @can('update', $post)
+                <a href="{{ route('posts.edit', ['post' => $post]) }}" class="float-right bg-transparent hover:bg-green-500 text-green-700 font-semibold hover:text-white py-2 px-4 border border-green-500 hover:border-transparent rounded"
+                    id="edit-button">Edit Post</a>
+            @endcan
         </div>
     </x-slot>
 
     @if ($post->imagePath)
-        <div class="relative w-full bg-red-500" style="padding-bottom: 56.25%">
+        <div class="relative 6/7 bg-red-500" style="padding-bottom: 56.25%">
             <img src="../{{ $post->imagePath }}" alt="Image Uploaded by Poster"
                 class="absolute h-full w-full object-cover" />
         </div>
@@ -52,7 +62,7 @@
                 @{{ comment.content }}
             </div>
             <div class="text-sm italic float-right">
-                @{{ comment.created_at }}
+                @{{ comment.created_at.split("T")[0] + " " + comment.created_at.split("T")[1].split(".")[0] }}
             </div>
         </div>
 
