@@ -4,9 +4,20 @@ namespace App\Http\Controllers;
 
 use App\Models\Post;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 
 class PostController extends Controller
 {
+    /**
+     * Create the controller instance.
+     *
+     * @return void
+     */
+    public function __construct()
+    {
+        $this->authorizeResource(Post::class, 'post');
+    }
+
     /**
      * Display a listing of the resource.
      *
@@ -50,7 +61,6 @@ class PostController extends Controller
         $validatedData = $request->validate([
             'title' => 'required|max:300',
             'content' => 'required|max:10000',
-            'imagePath' => 'nullable',
         ]);
 
         $post = new Post;
@@ -82,7 +92,7 @@ class PostController extends Controller
      */
     public function edit(Post $post)
     {
-        //
+        return view('posts.edit', ['post' => $post]);
     }
 
     /**
@@ -94,7 +104,36 @@ class PostController extends Controller
      */
     public function update(Request $request, Post $post)
     {
-        //
+        $request->validate([
+            'uploadedFile' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:4096',
+        ]);
+
+        $path = null;
+        if ($request->hasFile('uploadedFile')) {
+            if ($request->file('uploadedFile')->isValid()) {
+                $path = $request->uploadedFile->store('images');
+                if ($post->imagePath) {
+                    Storage::delete($post->imagePath);
+                }
+            }
+        }
+
+        $validatedData = $request->validate([
+            'title' => 'required|max:300',
+            'content' => 'required|max:10000',
+        ]);
+
+        $request->merge(['imagePath' => $path]);
+
+        $post->title = $validatedData['title'];
+        $post->content = $validatedData['content'];
+        if ($path) {
+            $post->imagePath = $path;
+        }
+        $post->save();
+
+        session()->flash('message', 'Post Updated Successfully!');
+        return redirect()->route('posts.show', ['post' => $post]);
     }
 
     /**
@@ -105,6 +144,8 @@ class PostController extends Controller
      */
     public function destroy(Post $post)
     {
-        //
+        $post->delete();
+        session()->flash('message', 'Post Deleted Successfully!');
+        return redirect()->route('posts.index', ['post' => $post]);
     }
 }
