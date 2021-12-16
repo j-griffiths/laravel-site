@@ -57,7 +57,9 @@
                 };
             },
             setLink(item) {
-                return this.currPath + "/" + item.id;
+                let url = "{{ route('posts.show', ':id') }}";
+                url = url.replace(':id', item.id);
+                return url;
             },
         },
         computed: {
@@ -71,9 +73,6 @@
                     end = start + this.size;
                 return this.items.slice(start, end);
             },
-            currPath() {
-                return window.location.pathname;
-            }
         },
     });
 </script>
