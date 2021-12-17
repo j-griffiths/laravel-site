@@ -151,7 +151,7 @@ class PostController extends Controller
         Storage::delete($post->imagePath);
         $post->delete();
         session()->flash('message', 'Post Deleted Successfully!');
-        return redirect()->route('posts.index', ['post' => $post]);
+        return redirect()->route('posts.index');
     }
 
     public function shareToFacebook($example, Facebook $fb)
