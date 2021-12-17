@@ -18,15 +18,13 @@ class CommentTableSeeder extends Seeder
         $comment = new Comment;
         $comment->content = "This is an example of content that a comment could include.";
         $comment->profile_id = 1;
-        $comment->commentable_id = 1;
-        $comment->commentable_type = Post::class;
+        $comment->post_id = 1;
         $comment->save();
 
         $comment = new Comment;
         $comment->content = "This is a sub-comment.";
         $comment->profile_id = 2;
-        $comment->commentable_id = 1;
-        $comment->commentable_type = Comment::class;
+        $comment->post_id = 1;
         $comment->save();
 
         Comment::factory(50)->create();

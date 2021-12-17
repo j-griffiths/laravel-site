@@ -14,14 +14,9 @@ class Comment extends Model
         return $this->belongsTo(Profile::class);
     }
 
-    public function commentable()
+    public function post()
     {
-        return $this->morphTo();
-    }
-
-    public function comments()
-    {
-        return $this->morphMany(Comment::class, 'commentable');
+        return $this->belongsTo(Post::class);
     }
 
     public function likes()

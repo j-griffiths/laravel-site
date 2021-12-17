@@ -24,9 +24,18 @@ class CommentController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Post $post)
     {
-        //
+        $comments = Comment::where('post_id', $post->id)->latest()->paginate(5);
+        foreach ($comments as $comment) {
+            $comment['name'] = $comment->profile->user->name;   
+        };
+        return response()->json([
+            'status' => 'success',
+            'msg'    => 'Okay',
+            'comments' => $comments,
+            'pagination' => $comments->links(),
+        ], 201);
     }
 
     /**
@@ -35,12 +44,11 @@ class CommentController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(Request $request, Post $post)
     {
         try {
             $request->validate([
                 'comment'   => 'required|max:5000',
-                'post_id' => 'required|integer|exists:posts,id'
             ]);
         } catch (ValidationException $exception) {
             return response()->json([
@@ -53,7 +61,6 @@ class CommentController extends Controller
         $user = auth()->user();
         $comment = new Comment();
         $comment->content = $request->comment;
-        $post = Post::find($request->post_id);
         $comment->profile()->associate($user->profile);
         $post->comments()->save($comment);
 
