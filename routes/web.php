@@ -33,4 +33,6 @@ Route::group(['middleware' => 'auth'], function () {
 
 Route::get('/analytics', [AnalyticController::class, 'index'])->name('analytics.index');
 
+Route::get('/posts/share/facebook/{exampleText}', [PostController::class, 'shareToFacebook'])->name('services.facebook.share');
+
 require __DIR__.'/auth.php';

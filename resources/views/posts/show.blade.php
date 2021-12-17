@@ -64,7 +64,7 @@
             </div>
         </div>
 
-        <div class="mb-4 border-t flex-col" v-for="comment in comments">
+        <div class="mb-4 border-t flex-col" v-for="comment in comments.data">
             <div class="mb-2 font-semibold text-sm flex-1">
                 @{{ comment . name }} @{{ comment . created_at . split('T')[0] + ' ' + comment . created_at . split('T')[1] . split('.')[0] }}
             </div>
@@ -78,26 +78,7 @@
             </div>
         </div>
 
-        @foreach ($post->comments->reverse() as $comment)
-            <div class="mb-4 border-t flex-col">
-                <div class="mb-2 font-semibold text-sm flex-1">
-                    {{ $comment->profile->user->name }} {{ $comment->created_at }}
-                </div>
-                <div class="text-base">
-                    {{ $comment->content }}
-                </div>
-                <div class="flex items-center">
-                    <div class="text-sm italic flex-1">
-                        <like-button class="float-right" likeable_id="{{ $comment->id }}"
-                            like_exists="{{ auth()->user()->profile->likedComments->contains($comment) }}"
-                            likeable_type="comment">
-                        </like-button>
-                    </div>
-                </div>
-            </div>
-        @endforeach
-
-        <div id="noComments" class="mb-2 border-t italic text-base">
+        <div class="mb-2 border-t italic text-base" v-if="anyComments">
             This post has no comments yet.
         </div>
 
@@ -156,34 +137,39 @@
     var app = new Vue({
         el: "#root",
         data: {
-            oldComments: <?php echo json_encode($post->comments); ?>,
             comments: [],
             newComment: '',
-            post_id: {{ $post->id }},
         },
         mounted: function() {
-            if (this.oldComments.length === 0) {
-                document.getElementById('noComments').style.display = '';
-            } else {
-                document.getElementById('noComments').style.display = 'none';
-            };
+            this.getComments();
         },
         methods: {
             createComment: function() {
-                axios.post("{{ route('api.comments.store') }}", {
+                axios.post("{{ route('api.posts.comments.store', ['post' => $post]) }}", {
                     comment: this.newComment,
-                    post_id: this.post_id,
                 }).then(response => {
                     console.log(response.data);
-                    this.comments.unshift(response.data.comment);
                     this.newComment = '';
-                    document.getElementById('noComments').style.display = 'none';
-                    document.getElementById('errorText').textContent = '';
+                    this.getComments();
                 }).catch(error => {
                     console.log(error.response.data);
-                    document.getElementById('errorText').textContent = error.response.data.errors
-                        .comment;
+                    document.getElementById('errorText').textContent = error.response.data.errors.comment;
                 });
+            },
+            getComments: function() {
+                axios.get("{{ route('api.posts.comments.index', ['post' => $post]) }}")
+                .then(response => {
+                    console.log(response.data);
+                    //document.getElementById("comments_section").innerHTML = response.data.comments;
+                    this.comments = response.data.comments;
+                }).catch(error => {
+                    console.log(error.response.data);
+                });
+            },
+        },
+        computed: {
+            anyComments() {
+                return this.comments === [];
             },
         },
     });
