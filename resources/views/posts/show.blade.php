@@ -74,7 +74,7 @@
             </div>
             <div class="flex items-center">
                 <div class="text-sm flex-1 flex items-center">
-                    <div class="flex-1" v-if="(this.admin == 1 || this.user_id == comment.profile_id)">
+                    <div class="flex-1" v-if="(admin == 1 || profile_id == comment.profile_id)">
                     <a :href="setLink(comment.id)" 
                         class="bg-transparent hover:bg-green-500 w-1/7 text-green-700 font-semibold hover:text-white py-2 px-4 border border-green-500 hover:border-transparent rounded"
                         id="edit-button">Edit</a>
@@ -165,7 +165,7 @@
             pagination: [],
             current_page: 1,
             last_page: 0,
-            user_id: {{auth()->user()->id}},
+            profile_id: {{auth()->user()->profile->id}},
             admin: {{auth()->user()->isAdministrator()}},
         },
         mounted: function() {
