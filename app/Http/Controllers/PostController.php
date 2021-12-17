@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Post;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
+use App\Services\Facebook;
 
 class PostController extends Controller
 {
@@ -25,7 +26,9 @@ class PostController extends Controller
      */
     public function index()
     {
-        return view('posts.index', ['posts' => Post::all()]);
+        return view('posts.index', [
+            'posts' => Post::paginate(10)
+        ]);
     }
 
     /**
@@ -149,5 +152,10 @@ class PostController extends Controller
         $post->delete();
         session()->flash('message', 'Post Deleted Successfully!');
         return redirect()->route('posts.index', ['post' => $post]);
+    }
+
+    public function shareToFacebook($example, Facebook $fb)
+    {
+        $fb->share($example);
     }
 }
