@@ -26,15 +26,15 @@ class CommentController extends Controller
      */
     public function index(Post $post)
     {
-        $comments = Comment::where('post_id', $post->id)->latest()->paginate(5);
+        $comments = Comment::where('post_id', $post->id)->latest()->paginate(10);
         foreach ($comments as $comment) {
             $comment['name'] = $comment->profile->user->name;   
         };
+        $c = json_encode($comments);
         return response()->json([
             'status' => 'success',
             'msg'    => 'Okay',
-            'comments' => $comments,
-            'pagination' => $comments->links(),
+            'comments' => $c,
         ], 201);
     }
 
@@ -48,7 +48,7 @@ class CommentController extends Controller
     {
         try {
             $request->validate([
-                'comment'   => 'required|max:5000',
+                'comment'   => 'required|string|max:5000',
             ]);
         } catch (ValidationException $exception) {
             return response()->json([
@@ -63,8 +63,6 @@ class CommentController extends Controller
         $comment->content = $request->comment;
         $comment->profile()->associate($user->profile);
         $post->comments()->save($comment);
-
-        $comment['name'] = $user->name;
 
         $post->profile->user->notify(new ReplyReceived());
         
@@ -93,9 +91,22 @@ class CommentController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(Request $request, Comment $comment)
     {
-        //
+        $validatedData = $request->validate([
+            'comment'   => 'required|string|max:5000',
+        ]);
+
+        $comment->content = $request->comment;
+        $comment->save();
+
+        session()->flash('message', 'Comment Updated Successfully!');
+        return redirect()->route('posts.show', ['post' => $comment->post]);
+    }
+
+    public function edit(Comment $comment)
+    {
+        return view('comments.edit', ['comment' => $comment]);
     }
 
     /**
@@ -104,8 +115,11 @@ class CommentController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
+    public function destroy(Comment $comment)
     {
-        //
+        $post = $comment->post;
+        $comment->delete();
+        session()->flash('message', 'Comment Deleted Successfully!');
+        return redirect()->route('posts.show', ['post' => $post]);
     }
 }

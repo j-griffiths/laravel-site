@@ -64,23 +64,46 @@
             </div>
         </div>
 
-        <div class="mb-4 border-t flex-col" v-for="comment in comments.data">
+        <div class="mb-4 border-t flex-col" v-for="comment in comments">
             <div class="mb-2 font-semibold text-sm flex-1">
-                @{{ comment . name }} @{{ comment . created_at . split('T')[0] + ' ' + comment . created_at . split('T')[1] . split('.')[0] }}
+                @{{ comment . name }}
+                @{{ comment . created_at . split('T')[0] + ' ' + comment . created_at . split('T')[1] . split('.')[0] }}
             </div>
             <div class="text-base">
                 @{{ comment . content }}
             </div>
             <div class="flex items-center">
-                <div class="text-sm italic flex-1">
-                    <like-button class="float-right" :likeable_id="comment.id" :like_exists="false" likeable_type="comment"></like-button>
+                <div class="text-sm flex-1 flex items-center">
+                    <div class="flex-1" v-if="(this.admin == 1 || this.user_id == comment.profile_id)">
+                    <a :href="setLink(comment.id)" 
+                        class="bg-transparent hover:bg-green-500 w-1/7 text-green-700 font-semibold hover:text-white py-2 px-4 border border-green-500 hover:border-transparent rounded"
+                        id="edit-button">Edit</a>
+                    </div>
+                    <div class="flex-1">
+                    </div>
+                    <like-button class="float-right" :likeable_id="comment.id" :like_exists="false"
+                        likeable_type="comment"></like-button>
                 </div>
             </div>
+        </div>
+
+        <div class="flex items-center justify-center">
+
+            <button
+                class="mr-2 bg-transparent hover:bg-blue-500 text-blue-700 font-semibold hover:text-white py-2 px-4 border border-blue-500 hover:border-transparent rounded"
+                onclick="app.prevComments()">Previous</button>
+            <div class="font-semibold italic mr-2">
+                Page <span v-text="current_page"></span> of <span v-text="last_page"></span>
+            </div>
+            <button
+                class="mr-2 bg-transparent hover:bg-blue-500 text-blue-700 font-semibold hover:text-white py-2 px-4 border border-blue-500 hover:border-transparent rounded"
+                onclick="app.nextComments()">Next</button>
         </div>
 
         <div class="mb-2 border-t italic text-base" v-if="anyComments">
             This post has no comments yet.
         </div>
+
 
     </div>
 
@@ -139,6 +162,11 @@
         data: {
             comments: [],
             newComment: '',
+            pagination: [],
+            current_page: 1,
+            last_page: 0,
+            user_id: {{auth()->user()->id}},
+            admin: {{auth()->user()->isAdministrator()}},
         },
         mounted: function() {
             this.getComments();
@@ -153,24 +181,69 @@
                     this.getComments();
                 }).catch(error => {
                     console.log(error.response.data);
-                    document.getElementById('errorText').textContent = error.response.data.errors.comment;
+                    document.getElementById('errorText').textContent = error.response.data.errors
+                        .comment;
                 });
             },
             getComments: function() {
                 axios.get("{{ route('api.posts.comments.index', ['post' => $post]) }}")
-                .then(response => {
-                    console.log(response.data);
-                    //document.getElementById("comments_section").innerHTML = response.data.comments;
-                    this.comments = response.data.comments;
-                }).catch(error => {
-                    console.log(error.response.data);
-                });
+                    .then(response => {
+                        console.log(response.data);
+                        let x = JSON.parse(response.data.comments);
+                        this.comments = x.data;
+                        this.next_url = x.next_page_url;
+                        this.prev_url = x.prev_page_url;
+                        this.current_page = x.current_page;
+                        this.last_page = x.last_page;
+                    }).catch(error => {
+                        console.log(error.response.data);
+                    });
+            },
+            nextComments: function() {
+                if (this.next_url == null) {
+                    return;
+                };
+                axios.get(this.next_url)
+                    .then(response => {
+                        console.log(response.data);
+                        let x = JSON.parse(response.data.comments);
+                        this.comments = x.data;
+                        this.next_url = x.next_page_url;
+                        this.prev_url = x.prev_page_url;
+                        this.current_page = x.current_page;
+                    }).catch(error => {
+                        console.log(error.response.data);
+                    });
+            },
+            prevComments: function() {
+                if (this.prev_url == null) {
+                    return;
+                };
+                axios.get(this.prev_url)
+                    .then(response => {
+                        console.log(response.data);
+                        let x = JSON.parse(response.data.comments);
+                        this.comments = x.data;
+                        this.next_url = x.next_page_url;
+                        this.prev_url = x.prev_page_url;
+                        this.current_page = x.current_page;
+                    }).catch(error => {
+                        console.log(error.response.data);
+                    });
+            },
+            setLink(id) {
+                let url = "{{ route('comments.edit', ':id') }}";
+                url = url.replace(':id', id);
+                return url;
             },
         },
         computed: {
             anyComments() {
                 return this.comments === [];
             },
+            permissions() {
+                return ;
+            }
         },
     });
 </script>
